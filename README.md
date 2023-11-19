@@ -11,7 +11,7 @@ docker run -p 6333:6333 -ti qdrant/qdrant
 
 # Ingest Knowledge base in Qdrant
 ```bash
-python src/ingest http://url/to/pdf1 http://url/to/pdf2 ... http://url/to/pdfn
+python src/ingest.py http://url/to/pdf1 http://url/to/pdf2 ... http://url/to/pdfn
 ```
 
 # Start the bot
