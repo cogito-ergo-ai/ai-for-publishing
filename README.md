@@ -20,9 +20,16 @@ pip install -r requirements.txt
 ```
 
 ### Running the Vector Database
-**Launch Vector DB (Qdrant)**: Use Docker to run the Qdrant database. This database is vital for storing and managing the knowledge base.
+
+Use Docker to run the Qdrant database. This database is vital for storing and managing the knowledge base.
 ```bash
 docker run -p 6333:6333 -ti qdrant/qdrant
+```
+You can also pre-load our test collection of real articles with:
+```bash
+curl -X POST 'http://localhost:6333/collections/knowledge_base/snapshots/upload' \
+    -H 'Content-Type:multipart/form-data' \
+    -F 'snapshot=@./data/vector-db-articles.snapshot'
 ```
 
 ### Knowledge Base Ingestion
