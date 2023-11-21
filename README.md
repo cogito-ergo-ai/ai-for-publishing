@@ -28,13 +28,13 @@ docker run -p 6333:6333 -ti qdrant/qdrant
 ### Knowledge Base Ingestion
 **Ingest Knowledge Base**: Populate the Qdrant database with articles to form your knowledge base. These articles will be utilized by the AI model to generate new content.
 ```bash
-python src/ingest.py http://url/to/pdf1 /path/to/local/pdf2
+python ai_publishing/ingest.py http://url/to/pdf1 /path/to/local/pdf2
 ```
 
 ### Starting the AI Bot
 **Activate the AI Bot**: Start the bot to engage in an interactive chat for article generation.
 ```bash
-python src/bot.py
+python ai_publishing/bot.py
 ```
 
 ## Usage Instructions / Quick show case
