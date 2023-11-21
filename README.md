@@ -37,6 +37,6 @@ python ai_publishing/ingest.py http://url/to/pdf1 /path/to/local/pdf2
 python ai_publishing/bot.py
 ```
 
-## Usage Instructions / Quick show case
+## Usage Instructions / Quick showcase
 
 ...
