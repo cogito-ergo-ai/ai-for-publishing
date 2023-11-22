@@ -20,23 +20,30 @@ pip install -r requirements.txt
 ```
 
 ### Running the Vector Database
-**Launch Vector DB (Qdrant)**: Use Docker to run the Qdrant database. This database is vital for storing and managing the knowledge base.
+
+Use Docker to run the Qdrant database. This database is vital for storing and managing the knowledge base.
 ```bash
 docker run -p 6333:6333 -ti qdrant/qdrant
+```
+You can also pre-load our test collection of real articles with:
+```bash
+curl -X POST 'http://localhost:6333/collections/knowledge_base/snapshots/upload' \
+    -H 'Content-Type:multipart/form-data' \
+    -F 'snapshot=@./data/vector-db-articles.snapshot'
 ```
 
 ### Knowledge Base Ingestion
 **Ingest Knowledge Base**: Populate the Qdrant database with articles to form your knowledge base. These articles will be utilized by the AI model to generate new content.
 ```bash
-python src/ingest.py http://url/to/pdf1 /path/to/local/pdf2
+python ai_publishing/ingest.py http://url/to/pdf1 /path/to/local/pdf2
 ```
 
 ### Starting the AI Bot
 **Activate the AI Bot**: Start the bot to engage in an interactive chat for article generation.
 ```bash
-python src/bot.py
+python ai_publishing/bot.py
 ```
 
-## Usage Instructions / Quick show case
+## Usage Instructions / Quick showcase
 
 ...
