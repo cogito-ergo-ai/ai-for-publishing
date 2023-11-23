@@ -95,7 +95,7 @@ if __name__ == "__main__":
         choices=["openai", "llama2"],
         type=str.lower,
         help="LLM model to use",
-        default="openai",
+        default="llama2",
         required=False
     )
     parser.add_argument(
