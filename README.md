@@ -37,8 +37,19 @@ python ai_publishing/ingest.py http://url/to/pdf1 /path/to/local/pdf2
 
 ### Starting the AI Bot
 Once your articles are available, start the bot to engage in an interactive chat for article generation.
+We have 2 models available:
+- LLAMA2 7B open source, no API key required
+- OpenAI ChatGPT which requires an API_KEY
+
+If you have an OpenAI API key we recommend to use it for a quality output a better performance.
+
+Example running with OpenAI
 ```bash
-python ai_publishing/bot.py
+OPENAI_API_KEY=<xxx> python ai_publishing/bot.py --model openai
+```
+as an alternative you can run the model with LLAMA 7B
+```bash
+python ai_publishing/bot.py --model llama2
 ```
 
 ## Usage Instructions / Quick showcase
