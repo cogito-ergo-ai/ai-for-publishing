@@ -1,6 +1,7 @@
 import argparse
-from langchain import PromptTemplate
+from langchain.prompts import PromptTemplate
 from langchain.llms import CTransformers
+from langchain.chat_models import ChatOpenAI
 from langchain.vectorstores import Qdrant
 from qdrant_client import QdrantClient
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -31,18 +32,25 @@ prompt = PromptTemplate(
 
 
 class BotManager:
-    def __init__(self, temperature, k):
+    def __init__(self, model, temperature, k):
         self.context = ""
         self.temperature = temperature
         self.k = k
+        self.model = model
 
     def load_model(self):
         # change model here based on your needs
-        llm = CTransformers(
-            model="TheBloke/Llama-2-7B-Chat-GGML",
-            model_type="llama",
-            temperature=self.temperature,
-        )
+        if self.model == "openai":
+            llm = ChatOpenAI(
+                model_name="gpt-4-1106-preview",
+                temperature=self.temperature
+            )
+        else:
+            llm = CTransformers(
+                model="TheBloke/Llama-2-7B-Chat-GGML",
+                model_type="llama",
+                temperature=self.temperature,
+            )
         return llm
 
     def response_with_qdrant_context(self, query):
@@ -83,6 +91,14 @@ if __name__ == "__main__":
         description="Content generation bot from Knowledge base"
     )
     parser.add_argument(
+        "--model",
+        choices=["openai", "llama2"],
+        type=str.lower,
+        help="LLM model to use",
+        default="llama2",
+        required=False
+    )
+    parser.add_argument(
         "--temperature",
         type=float,
         help="set models's temperature (must be in interval [0, 1])",
@@ -98,7 +114,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    bot_manager = BotManager(args.temperature, args.k)
+    bot_manager = BotManager(args.model, args.temperature, args.k)
 
     while True:
         user_input = input("prompt> ")
