@@ -32,15 +32,20 @@ prompt = PromptTemplate(
 
 
 class BotManager:
-    def __init__(self, model, temperature, k):
+    def __init__(self, model_type, temperature, k):
         self.context = ""
         self.temperature = temperature
         self.k = k
-        self.model = model
+        self.model_type = model_type
+        self.llm = None
+        self.embedding_model = None
+        self.vector_store = None
 
-    def load_model(self):
-        # change model here based on your needs
-        if self.model == "openai":
+    def _load_llm(self):
+        if self.llm is not None:
+            # model already loaded nothing to do
+            return
+        if self.model_type == "openai":
             llm = ChatOpenAI(
                 model_name="gpt-4-1106-preview",
                 temperature=self.temperature
@@ -51,31 +56,40 @@ class BotManager:
                 model_type="llama",
                 temperature=self.temperature,
             )
-        return llm
+        self.llm = llm
 
-    def response_with_qdrant_context(self, query):
-        embeddings = HuggingFaceEmbeddings(
+    def _load_embedding_model(self):
+        if self.embedding_model is not None:
+            return
+        self.embedding_model = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2",
             model_kwargs={"device": "cpu"},
         )
 
+    def _load_vector_store(self):
+        if self.vector_store is not None:
+            return
+        self._load_embedding_model()
         client = QdrantClient(url="http://localhost:6333")
-
-        doc_store = Qdrant(
-            client=client, collection_name="knowledge_base", embeddings=embeddings
+        self.vector_store = Qdrant(
+            client=client, collection_name="knowledge_base", embeddings=self.embedding_model
         )
 
-        llm = self.load_model()
+    def load_model(self):
+        # change model here based on your needs
+        self._load_llm()
+        self._load_embedding_model()
+        self._load_vector_store()
+
+    def response_with_qdrant_context(self, query):
         qa = RetrievalQA.from_chain_type(
-            llm=llm,
+            llm=self.llm,
             chain_type="stuff",
-            retriever=doc_store.as_retriever(search_kwargs={"k": self.k}),
+            retriever=self.vector_store.as_retriever(search_kwargs={"k": self.k}),
             return_source_documents=True,
             chain_type_kwargs={"prompt": prompt},
         )
-
-        response = qa({"query": query})
-        return response
+        return qa({"query": query})
 
     def update_context(self, new_context):
         self.context += " " + new_context
@@ -115,8 +129,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     bot_manager = BotManager(args.model, args.temperature, args.k)
+    bot_manager.load_model()
 
     while True:
         user_input = input("prompt> ")
         response = bot_manager.get_response(user_input)
-        print("Bot:", response)
+        print("Bot:", response["result"])
