@@ -89,9 +89,7 @@ class BotManager:
             return_source_documents=True,
             chain_type_kwargs={"prompt": prompt},
         )
-
-        response = qa({"query": query})
-        return response
+        return qa({"query": query})
 
     def update_context(self, new_context):
         self.context += " " + new_context
@@ -136,4 +134,4 @@ if __name__ == "__main__":
     while True:
         user_input = input("prompt> ")
         response = bot_manager.get_response(user_input)
-        print("Bot:", response)
+        print("Bot:", response["result"])
