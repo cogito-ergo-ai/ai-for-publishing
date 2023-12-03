@@ -8,7 +8,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.chains import RetrievalQA
 
 
-custom_prompt_template = """
+prompt = PromptTemplate.from_template("""
 Article Assistant is adept at creating high quality articles for the user according to the content he wants to generate. 
 The content should be generated from user-provided context relevant documents, transforming content into engaging, 
 well-structured articles while strictly adhering to the document's content. 
@@ -22,18 +22,17 @@ User input:
 
 ---
 Context Relevant Documents: 
+
 {context}
 
-"""
-
-prompt = PromptTemplate(
-    template=custom_prompt_template, input_variables=["context", "question"]
-)
+""")
+document_prompt = PromptTemplate.from_template("""{page_content}: 
+{content}
+""")
 
 
 class BotManager:
     def __init__(self, model_type, temperature, k):
-        self.context = ""
         self.temperature = temperature
         self.k = k
         self.model_type = model_type
@@ -55,6 +54,7 @@ class BotManager:
                 model="TheBloke/Llama-2-7B-Chat-GGML",
                 model_type="llama",
                 temperature=self.temperature,
+                device="cuda"
             )
         self.llm = llm
 
@@ -63,7 +63,7 @@ class BotManager:
             return
         self.embedding_model = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2",
-            model_kwargs={"device": "cpu"},
+            model_kwargs={"device": "cuda"},
         )
 
     def _load_vector_store(self):
@@ -87,17 +87,16 @@ class BotManager:
             chain_type="stuff",
             retriever=self.vector_store.as_retriever(search_kwargs={"k": self.k}),
             return_source_documents=True,
-            chain_type_kwargs={"prompt": prompt},
+            chain_type_kwargs={
+                "prompt": prompt,
+                "document_prompt": document_prompt
+            },
         )
         return qa({"query": query})
 
-    def update_context(self, new_context):
-        self.context += " " + new_context
-
     def get_response(self, query):
-        self.update_context(query)
-        response = self.response_with_qdrant_context(query)
-        return response
+        res = self.response_with_qdrant_context(query)
+        return res
 
 
 if __name__ == "__main__":
@@ -132,6 +131,15 @@ if __name__ == "__main__":
     bot_manager.load_model()
 
     while True:
-        user_input = input("prompt> ")
+        command = "Write an article about "
+        user_input = input(f"{command}:> ")
+        user_input = command + user_input
         response = bot_manager.get_response(user_input)
-        print("Bot:", response["result"])
+        # print("Bot:", response["result"])
+        from pprint import pprint
+        print("Input Source Documents:")
+        for x in response["source_documents"]:
+            print("*" + x.metadata["title"] + ": " + x.metadata["summary"])
+        print("---")
+        print("Article:")
+        print(response["result"])
