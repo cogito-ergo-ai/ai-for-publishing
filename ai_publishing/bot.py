@@ -33,7 +33,6 @@ document_prompt = PromptTemplate.from_template("""{page_content}:
 
 class BotManager:
     def __init__(self, model_type, temperature, k):
-        self.context = ""
         self.temperature = temperature
         self.k = k
         self.model_type = model_type
@@ -55,6 +54,7 @@ class BotManager:
                 model="TheBloke/Llama-2-7B-Chat-GGML",
                 model_type="llama",
                 temperature=self.temperature,
+                device="cuda"
             )
         self.llm = llm
 
@@ -63,7 +63,7 @@ class BotManager:
             return
         self.embedding_model = HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2",
-            model_kwargs={"device": "cpu"},
+            model_kwargs={"device": "cuda"},
         )
 
     def _load_vector_store(self):
@@ -94,11 +94,7 @@ class BotManager:
         )
         return qa({"query": query})
 
-    def update_context(self, new_context):
-        self.context += " " + new_context
-
     def get_response(self, query):
-        self.update_context(query)
         res = self.response_with_qdrant_context(query)
         return res
 
