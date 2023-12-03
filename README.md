@@ -32,7 +32,19 @@ curl -X POST 'http://localhost:6333/collections/knowledge_base/snapshots/upload'
 ```
 *otherwise* if you want to use your own articles you can manually load them via:
 ```bash
-python ai_publishing/ingest.py http://url/to/pdf1 /path/to/local/pdf2
+python ai_publishing/ingest.py /path/to/your/articles.json
+```
+Where `articles.json` contains a list of articles with the following properties:
+```json
+[
+  ...
+  {
+    "title": "Energy prices: shippinghold-upsmade the 2022 spike worse \u2013 and could do so\u00a0again",
+    "summary": "LNG carriers were delayed in unloading in EU ports because there weren\u2019t enough terminals to process the fuel.",
+    "content": "Germany and some other EU countries are ...."
+  },
+  ...
+]
 ```
 
 ### Starting the AI Bot
