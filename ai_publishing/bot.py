@@ -115,7 +115,7 @@ if __name__ == "__main__":
         "--temperature",
         type=float,
         help="set models's temperature (must be in interval [0, 1])",
-        default=0.2,
+        default=0.0,
         required=False,
     )
     parser.add_argument(
