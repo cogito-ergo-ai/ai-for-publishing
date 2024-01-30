@@ -7,8 +7,15 @@ generation of content that respects Intellectual Property (IP) rights.
 
 This POC is part of the article series "...tbd...".
 
+## Video Demo
+
+https://github.com/cogito-ergo-ai/ai-for-publishing/assets/17476233/d0ce8f9c-aaf0-4e59-b2a7-e584de970fdf
+
+
 ## System Architecture
-[Insert a detailed diagram here to illustrate the system architecture or workflow]
+
+![System Architecture](docs/AI for publishing.drawio.png)
+
 
 ## Getting Started
 
