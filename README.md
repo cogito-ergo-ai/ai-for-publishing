@@ -14,8 +14,7 @@ https://github.com/cogito-ergo-ai/ai-for-publishing/assets/17476233/d0ce8f9c-aaf
 
 ## System Architecture
 
-![System Architecture](docs/AI for publishing.drawio.png)
-
+![System architecture](https://github.com/cogito-ergo-ai/ai-for-publishing/assets/17476233/9f4f73da-b58e-435e-a5f9-11cf6b16018e)
 
 ## Getting Started
 
